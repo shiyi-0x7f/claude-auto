@@ -23,6 +23,9 @@ pub struct Account {
     /// CLI `.claude.json` 中 `oauthAccount` 的原样副本（切换时一并写回）
     pub oauth_account: Option<Value>,
     pub added_at: i64,
+    /// 手动设置的订阅到期日（毫秒）；为空时按订阅开始日按月推算
+    #[serde(default)]
+    pub subscription_expires_override: Option<i64>,
 }
 
 impl Account {
@@ -131,6 +134,7 @@ impl Vault {
             oauth,
             oauth_account,
             added_at: now_ms(),
+            subscription_expires_override: None,
         });
         Ok(id)
     }

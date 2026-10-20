@@ -10,6 +10,7 @@ const base: QuipContext = {
   fiveHourReset: "2h13m",
   pending: null,
   privacy: true,
+  loginExpiringDays: null,
 };
 
 const pending: PendingView = {
@@ -35,6 +36,11 @@ describe("quipsFor", () => {
 
   it("names the target when privacy is off", () => {
     expect(quipsFor({ ...base, pending, privacy: false })).toContain("换 bob@example.com 上场？");
+  });
+
+  it("warns first about expiring logins", () => {
+    expect(quipsFor({ ...base, loginExpiringDays: 3 })[0]).toBe("有账号 3 天后要重新登录");
+    expect(quipsFor({ ...base, loginExpiringDays: -1 })[0]).toBe("有账号登录过期了！");
   });
 
   it("handles all accounts exhausted", () => {

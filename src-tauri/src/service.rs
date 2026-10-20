@@ -232,7 +232,9 @@ impl Service {
             g.last_poll_at = Some(now_ms());
             g.last_error = None;
         }
-        self.evaluate().await
+        self.evaluate().await?;
+        crate::alerts::check(self);
+        Ok(())
     }
 
     /// 根据激活账号额度生成/清除切换建议；自动模式直接执行切换。
@@ -449,6 +451,17 @@ impl Service {
             {
                 g.pending = None;
             }
+        }
+        self.emit();
+        Ok(())
+    }
+
+    /// 手动设置订阅到期日（毫秒）；None 恢复为按月推算。
+    pub fn set_subscription_expiry(&self, id: &str, at: Option<i64>) -> AppResult<()> {
+        {
+            let mut g = self.lock();
+            g.vault.get_mut(id)?.subscription_expires_override = at;
+            g.vault.save()?;
         }
         self.emit();
         Ok(())

@@ -8,6 +8,7 @@ import {
   levelOf,
   moodOf,
   shortLabel,
+  daysLeft,
 } from "../src/utils/format";
 
 const settings: Settings = {
@@ -32,6 +33,8 @@ function account(fh: number, sd: number): AccountView {
       fiveHour: { utilization: fh, resetsAt: 10_000 },
       sevenDay: { utilization: sd, resetsAt: 20_000 },
     },
+    refreshExpiresAt: null,
+    renewal: null,
     error: null,
     needsRelogin: false,
     checkedAt: null,
@@ -54,6 +57,15 @@ describe("formatCountdownCompact", () => {
     expect(formatCountdownCompact((2 * 60 + 3) * 60_000, 0)).toBe("2h03m");
     expect(formatCountdownCompact(8 * 60_000, 0)).toBe("08m");
     expect(formatCountdownCompact(5, 10)).toBe("00m");
+  });
+});
+
+describe("daysLeft", () => {
+  it("floors like the backend", () => {
+    const day = 86_400_000;
+    expect(daysLeft(3 * day + 5, 0)).toBe(3);
+    expect(daysLeft(day - 1, 0)).toBe(0);
+    expect(daysLeft(0, 1)).toBe(-1);
   });
 });
 

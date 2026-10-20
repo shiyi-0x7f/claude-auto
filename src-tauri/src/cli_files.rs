@@ -91,6 +91,9 @@ pub mod oauth {
     pub fn expires_at(v: &Value) -> Option<i64> {
         v.get("expiresAt").and_then(Value::as_i64)
     }
+    pub fn refresh_expires_at(v: &Value) -> Option<i64> {
+        v.get("refreshTokenExpiresAt").and_then(Value::as_i64)
+    }
     pub fn subscription_type(v: &Value) -> Option<&str> {
         v.get("subscriptionType").and_then(Value::as_str)
     }
@@ -115,6 +118,9 @@ pub mod account {
     }
     pub fn email(v: &Value) -> Option<&str> {
         v.get("emailAddress").and_then(Value::as_str)
+    }
+    pub fn subscription_created_at(v: &Value) -> Option<&str> {
+        v.get("subscriptionCreatedAt").and_then(Value::as_str)
     }
 }
 

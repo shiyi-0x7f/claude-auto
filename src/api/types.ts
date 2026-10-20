@@ -19,6 +19,10 @@ export interface AccountView {
   plan: string | null;
   isActive: boolean;
   tokenExpiresAt: number | null;
+  /** 登录有效期（refresh token 到期时间），过期需重新登录；未知为 null */
+  refreshExpiresAt: number | null;
+  /** 订阅续费/到期日：manual 为手动设置，estimated 为按月推算 */
+  renewal: { at: number; source: "manual" | "estimated" } | null;
   usage: Usage | null;
   error: string | null;
   needsRelogin: boolean;

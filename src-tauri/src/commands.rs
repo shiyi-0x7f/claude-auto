@@ -68,6 +68,11 @@ pub fn rename_account(svc: Svc<'_>, id: String, label: String) -> AppResult<()> 
 }
 
 #[tauri::command]
+pub fn set_subscription_expiry(svc: Svc<'_>, id: String, at: Option<i64>) -> AppResult<()> {
+    svc.set_subscription_expiry(&id, at)
+}
+
+#[tauri::command]
 pub fn update_settings(svc: Svc<'_>, settings: Settings) -> AppResult<()> {
     svc.update_settings(settings)
 }

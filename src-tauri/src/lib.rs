@@ -1,7 +1,9 @@
+mod alerts;
 mod anthropic;
 mod cli_files;
 mod commands;
 mod error;
+mod expiry;
 mod fsutil;
 mod login;
 mod policy;
@@ -114,6 +116,7 @@ pub fn run() {
             commands::cancel_login,
             commands::remove_account,
             commands::rename_account,
+            commands::set_subscription_expiry,
             commands::update_settings,
             commands::open_main,
         ])

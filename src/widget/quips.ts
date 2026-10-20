@@ -11,6 +11,8 @@ export interface QuipContext {
   fiveHourReset: string;
   pending: PendingView | null;
   privacy: boolean;
+  /** 登录即将过期账号中最少的剩余天数（无则 null） */
+  loginExpiringDays: number | null;
 }
 
 const pct = (v: number | null) => (v === null ? "--" : `${Math.round(v)}%`);
@@ -23,6 +25,15 @@ export function quipsFor(ctx: QuipContext): string[] {
       ? [`${ctx.pending.reasonLabel}到顶了！`, `换 ${who} 上场？`]
       : ["全员没电了…", `等 ${ctx.fiveHourReset} 后再战`];
   }
+  const lines = moodQuips(ctx);
+  if (ctx.loginExpiringDays !== null) {
+    const d = ctx.loginExpiringDays;
+    lines.unshift(d < 0 ? "有账号登录过期了！" : `有账号 ${d} 天后要重新登录`);
+  }
+  return lines;
+}
+
+function moodQuips(ctx: QuipContext): string[] {
   switch (ctx.mood) {
     case "happy":
       return [

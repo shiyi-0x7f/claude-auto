@@ -12,7 +12,9 @@ import {
   formatCountdownCompact,
   levelOf,
   moodOf,
+  daysLeft,
   planLabel,
+  RELOGIN_WARN_DAYS,
   shortLabel,
 } from "../utils/format";
 import { quipsFor } from "./quips";
@@ -59,6 +61,7 @@ export function Widget() {
     fiveHourReset: formatCountdownCompact(active?.usage?.fiveHour?.resetsAt, now),
     pending: snap?.pending ?? null,
     privacy: settings?.privacyMode ?? true,
+    loginExpiringDays: minLoginDays(snap?.accounts ?? [], now),
   });
   const typed = useTypewriter(error ? [`ERR ${error.code}`, error.message] : lines);
 
@@ -207,17 +210,33 @@ function Bar(props: {
   );
 }
 
-/** 队伍栏：每个账号一个像素小头像，颜色表示额度状态；在场账号头顶有 ▼ */
+/** 账号登录剩余天数：需重新登录视为已过期 */
+function loginDays(a: AccountView, now: number): number | null {
+  if (a.needsRelogin) return -1;
+  return a.refreshExpiresAt === null ? null : daysLeft(a.refreshExpiresAt, now);
+}
+
+/** 登录即将过期（< RELOGIN_WARN_DAYS 天）的账号中最少的剩余天数 */
+function minLoginDays(accounts: AccountView[], now: number): number | null {
+  const days = accounts
+    .map((a) => loginDays(a, now))
+    .filter((d): d is number => d !== null && d < RELOGIN_WARN_DAYS);
+  return days.length ? Math.min(...days) : null;
+}
+
+/** 队伍栏：每个账号一个像素小头像，颜色表示额度状态；在场账号头顶有 ▼，登录将过期的显示 ! */
 function Party(props: { accounts: AccountView[]; settings: Settings; now: number }) {
   return (
     <span className="party">
       {props.accounts.map((a) => {
         const mood = moodOf(a, props.settings, props.now);
         const color = a.error !== null ? LEVEL_COLOR.unknown : MOOD_GLOW[mood][0];
+        const d = loginDays(a, props.now);
+        const alert = d !== null && d < RELOGIN_WARN_DAYS;
         return (
           <i
             key={a.id}
-            className={`party__pet${a.isActive ? " party__pet--active" : ""}`}
+            className={`party__pet${a.isActive ? " party__pet--active" : ""}${alert ? " party__pet--alert" : ""}`}
             style={{ ["--c" as string]: color }}
             title={props.settings.privacyMode ? MOOD_TEXT[mood] : `${a.label} · ${MOOD_TEXT[mood]}`}
           />

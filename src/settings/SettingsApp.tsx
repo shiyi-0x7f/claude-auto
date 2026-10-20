@@ -289,6 +289,10 @@ function AccountsTab({ snap, now, action }: { snap: Snapshot; now: number; actio
           onRename={(label) =>
             void action.run(`rename:${a.id}`, () => api.renameAccount(a.id, label))
           }
+          onRelogin={() => void action.run("login", api.startLogin)}
+          onSetRenewal={(at) =>
+            void action.run(`renewal:${a.id}`, () => api.setSubscriptionExpiry(a.id, at))
+          }
         />
       ))}
     </div>

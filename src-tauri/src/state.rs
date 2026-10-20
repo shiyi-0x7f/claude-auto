@@ -1,11 +1,13 @@
 //! 运行时状态与给前端的快照 DTO。
 
-use std::collections::{HashMap, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 
 use serde::Serialize;
 
 use crate::anthropic::Usage;
 use crate::cli_files::oauth;
+use crate::expiry::{self, RenewalSource};
+use crate::fsutil::now_ms;
 use crate::login::LoginSession;
 use crate::policy::Exhaustion;
 use crate::settings::{Settings, SettingsStore};
@@ -53,6 +55,8 @@ pub struct Inner {
     pub login: Option<LoginSession>,
     pub last_error: Option<String>,
     pub last_poll_at: Option<i64>,
+    /// 已发过的到期提醒键，避免每轮轮询重复通知
+    pub expiry_alerted: HashSet<String>,
 }
 
 impl Inner {
@@ -69,6 +73,7 @@ impl Inner {
             login: None,
             last_error: None,
             last_poll_at: None,
+            expiry_alerted: HashSet::new(),
         }
     }
 
@@ -94,6 +99,7 @@ impl Inner {
     }
 
     pub fn snapshot(&self, cli_config_dir: String, proxy: Option<String>) -> Snapshot {
+        let now = now_ms();
         let accounts = self
             .vault
             .data
@@ -108,6 +114,9 @@ impl Inner {
                     plan: oauth::subscription_type(&a.oauth).map(String::from),
                     is_active: self.active_id.as_deref() == Some(a.id.as_str()),
                     token_expires_at: oauth::expires_at(&a.oauth),
+                    refresh_expires_at: expiry::refresh_expires_at(a),
+                    renewal: expiry::renewal_of(a, now)
+                        .map(|(at, source)| RenewalView { at, source }),
                     usage: st.usage,
                     error: st.error,
                     needs_relogin: st.needs_relogin,
@@ -147,10 +156,21 @@ pub struct AccountView {
     pub plan: Option<String>,
     pub is_active: bool,
     pub token_expires_at: Option<i64>,
+    /// 登录有效期（refresh token 到期时间），过期后需重新登录；未知时为 None
+    pub refresh_expires_at: Option<i64>,
+    /// 订阅续费/到期日
+    pub renewal: Option<RenewalView>,
     pub usage: Option<Usage>,
     pub error: Option<String>,
     pub needs_relogin: bool,
     pub checked_at: Option<i64>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RenewalView {
+    pub at: i64,
+    pub source: RenewalSource,
 }
 
 #[derive(Debug, Clone, Serialize)]

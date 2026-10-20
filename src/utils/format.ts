@@ -37,6 +37,22 @@ export function formatCountdownCompact(resetsAt: number | null | undefined, now:
   return `${pad(mins)}m`;
 }
 
+const DAY_MS = 86_400_000;
+
+/** 剩余整天数（向下取整，已过期为负），与后端 expiry::days_left 一致 */
+export function daysLeft(at: number, now: number): number {
+  return Math.floor((at - now) / DAY_MS);
+}
+
+/** 登录有效期提醒阈值（天），与后端 RELOGIN_WARN_DAYS 一致 */
+export const RELOGIN_WARN_DAYS = 7;
+
+/** 「11-17」 */
+export function formatDate(ts: number): string {
+  const d = new Date(ts);
+  return `${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 /** 挂件隐私模式：只保留账号名前两个字 */
 export function shortLabel(label: string): string {
   return [...label].slice(0, 2).join("");

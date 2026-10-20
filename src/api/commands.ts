@@ -17,6 +17,9 @@ export const api = {
   cancelLogin: () => invoke<void>("cancel_login"),
   removeAccount: (id: string) => invoke<void>("remove_account", { id }),
   renameAccount: (id: string, label: string) => invoke<void>("rename_account", { id, label }),
+  /** at 为 null 时恢复按月推算 */
+  setSubscriptionExpiry: (id: string, at: number | null) =>
+    invoke<void>("set_subscription_expiry", { id, at }),
   updateSettings: (settings: Settings) => invoke<void>("update_settings", { settings }),
   openMain: () => invoke<void>("open_main"),
 };

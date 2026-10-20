@@ -197,3 +197,36 @@ body,
   padding: 3px 0;
   cursor: pointer;
 }
+
+.expiry {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 0 2px;
+  border-top: 1px dashed var(--s-border);
+}
+
+.expiry__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 26px;
+  font-size: 12px;
+}
+
+.expiry__label {
+  flex: none;
+  width: 44px;
+  opacity: 0.65;
+}
+
+.expiry__value {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.expiry__picker {
+  width: 118px;
+}

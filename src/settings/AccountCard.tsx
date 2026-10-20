@@ -4,6 +4,7 @@ import { DeleteOutlined, SwapOutlined, WarningOutlined } from "@ant-design/icons
 import type { AccountView, Settings, UsageWindow } from "../api/types";
 import { Masked, useTimedReveal } from "../components/Masked";
 import { Mascot } from "../components/Mascot";
+import { ExpiryRows } from "./ExpiryRows";
 import { LEVEL_COLOR } from "../theme";
 import {
   effectiveUtil,
@@ -23,6 +24,8 @@ interface Props {
   onSwitch: () => void;
   onRemove: () => void;
   onRename: (label: string) => void;
+  onRelogin: () => void;
+  onSetRenewal: (at: number | null) => void;
 }
 
 export function AccountCard({
@@ -33,6 +36,8 @@ export function AccountCard({
   onSwitch,
   onRemove,
   onRename,
+  onRelogin,
+  onSetRenewal,
 }: Props) {
   const mood = moodOf(a, settings, now);
   const { revealed, setRevealed } = useTimedReveal();
@@ -88,6 +93,8 @@ export function AccountCard({
         threshold={settings.sevenDayThreshold}
         now={now}
       />
+
+      <ExpiryRows account={a} now={now} onRelogin={onRelogin} onSetRenewal={onSetRenewal} />
 
       {a.error && (
         <Typography.Paragraph
