@@ -211,6 +211,10 @@ pub fn apply_refresh(current: &Value, resp: &Value, now: i64) -> AppResult<Value
     if let Some(secs) = resp.get("expires_in").and_then(Value::as_i64) {
         obj.insert("expiresAt".into(), (now + secs * 1000).into());
     }
+    // refresh token 自身的有效期（与 CLI 一致记为 refreshTokenExpiresAt），过期后只能重新登录
+    if let Some(secs) = resp.get("refresh_token_expires_in").and_then(Value::as_i64) {
+        obj.insert("refreshTokenExpiresAt".into(), (now + secs * 1000).into());
+    }
     if let Some(scope) = resp.get("scope").and_then(Value::as_str) {
         let scopes: Vec<Value> = scope.split_whitespace().map(Value::from).collect();
         obj.insert("scopes".into(), scopes.into());
@@ -349,6 +353,18 @@ mod tests {
         assert_eq!(next["expiresAt"], 1000 + 3_600_000);
         assert_eq!(next["subscriptionType"], "max");
         assert_eq!(next["scopes"], json!(["user:inference", "user:profile"]));
+    }
+
+    #[test]
+    fn apply_refresh_records_refresh_token_expiry() {
+        let cur = json!({"accessToken":"a","refreshToken":"r","refreshTokenExpiresAt":5});
+        let resp =
+            json!({"access_token":"a2","refresh_token":"r2","refresh_token_expires_in":2_592_000});
+        let next = apply_refresh(&cur, &resp, 1000).unwrap();
+        assert_eq!(next["refreshTokenExpiresAt"], 1000 + 2_592_000_000_i64);
+        // 响应不带该字段时保留原值
+        let next = apply_refresh(&cur, &json!({"access_token":"a2"}), 1000).unwrap();
+        assert_eq!(next["refreshTokenExpiresAt"], 5);
     }
 
     #[test]
