@@ -1,0 +1,29 @@
+.mosaic {
+  display: inline-grid;
+  grid-template-columns: repeat(var(--cols), 0.42em);
+  grid-auto-rows: 0.42em;
+  vertical-align: middle;
+  border-radius: 2px;
+  overflow: hidden;
+  opacity: 0.9;
+}
+
+.mosaic i {
+  display: block;
+}
+
+.mosaic--revealable {
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.mosaic--revealable:hover {
+  opacity: 1;
+  outline: 1px solid rgba(34, 211, 238, 0.6);
+  outline-offset: 2px;
+}
+
+.masked-text {
+  cursor: pointer;
+  border-bottom: 1px dashed rgba(34, 211, 238, 0.6);
+}

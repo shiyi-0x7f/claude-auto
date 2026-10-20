@@ -1,0 +1,331 @@
+/* Claude 像素小生物动画。像素感：位移多用 steps() 跳格而非平滑过渡。 */
+
+.claw {
+  overflow: visible;
+}
+
+.claw__all,
+.claw__torso,
+.claw__legs-a,
+.claw__legs-b,
+.claw__arm-l,
+.claw__arm-r,
+.claw__look,
+.claw__eyes,
+.claw__crest,
+.claw__spark,
+.claw__shadow {
+  transform-box: fill-box;
+}
+
+/* —— 待机：原地踏步 + 身体起伏 —— */
+.claw__legs-a {
+  animation: claw-step 0.9s steps(1) infinite;
+}
+.claw__legs-b {
+  animation: claw-step 0.9s steps(1) infinite 0.45s;
+}
+.claw__torso {
+  animation: claw-bob 0.9s steps(1) infinite;
+}
+
+/* —— 眼睛：张望 + 眨眼 —— */
+.claw__look {
+  animation: claw-look 7s steps(1) infinite;
+}
+.claw__eyes {
+  transform-origin: center;
+  animation: claw-blink 4.6s infinite;
+}
+
+/* —— 右手挥手 —— */
+.claw__arm-r {
+  transform-origin: left bottom;
+  animation: claw-wave 6s ease-in-out infinite;
+}
+
+/* —— 星芒：慢转 + 呼吸 —— */
+.claw__crest {
+  /* 基准位置：头顶正中；动画与静止态都以此为准 */
+  transform: translate(60px, 26px);
+  transform-origin: center;
+  animation: claw-float 2.4s ease-in-out infinite;
+}
+.claw__spark {
+  transform-origin: center;
+  animation: claw-spin 9s linear infinite;
+}
+
+.claw__shadow {
+  transform-origin: center;
+  animation: claw-shadow 0.9s steps(1) infinite;
+}
+
+/* —— 开心：小火花 —— */
+.claw__sparkles rect {
+  transform-box: fill-box;
+  opacity: 0;
+  animation: claw-sparkle 2.4s ease-out infinite;
+}
+.claw__sparkles .s2 {
+  animation-delay: 0.8s;
+}
+.claw__sparkles .s3 {
+  animation-delay: 1.6s;
+}
+
+/* —— 悬停：蹦一下 —— */
+.claw:hover .claw__all {
+  animation: claw-jump 0.55s ease-out;
+}
+
+/* —— 紧张：发抖、快转、冒汗、不挥手 —— */
+.claw--worried .claw__all {
+  animation: claw-jitter 0.35s steps(2) infinite;
+}
+.claw--worried .claw__spark {
+  animation-duration: 1.4s;
+}
+.claw--worried .claw__arm-r {
+  animation: none;
+}
+.claw--worried .claw__look {
+  animation: none;
+}
+.claw__sweat {
+  animation: claw-sweat 1.4s ease-in infinite;
+}
+
+/* —— 耗尽：趴下打盹 —— */
+.claw--sleepy .claw__all {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: claw-breathe 3.6s ease-in-out infinite;
+}
+.claw--sleepy .claw__legs-a,
+.claw--sleepy .claw__legs-b,
+.claw--sleepy .claw__torso,
+.claw--sleepy .claw__look,
+.claw--sleepy .claw__eyes,
+.claw--sleepy .claw__arm-r,
+.claw--sleepy .claw__shadow {
+  animation: none;
+}
+.claw--sleepy .claw__spark {
+  opacity: 0.35;
+  animation-duration: 30s;
+}
+.claw--sleepy .claw__crest {
+  animation: none;
+}
+.claw__zzz text {
+  animation: claw-zzz 3s ease-out infinite;
+}
+.claw__zzz text:nth-child(2) {
+  animation-delay: 1.2s;
+}
+
+/* —— 无数据：东张西望、歪头 —— */
+.claw--confused .claw__look {
+  animation: claw-look 1.8s steps(1) infinite;
+}
+.claw--confused .claw__torso {
+  transform-origin: center bottom;
+  animation: claw-tilt 2.6s ease-in-out infinite;
+}
+.claw--confused .claw__arm-r {
+  animation: none;
+}
+
+.claw--still *,
+.claw--still {
+  animation: none !important;
+}
+
+@keyframes claw-step {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes claw-bob {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes claw-shadow {
+  0% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(0.92);
+  }
+}
+
+@keyframes claw-look {
+  0% {
+    transform: translateX(0);
+  }
+  38% {
+    transform: translateX(-3px);
+  }
+  52% {
+    transform: translateX(0);
+  }
+  64% {
+    transform: translateX(3px);
+  }
+  78% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes claw-blink {
+  0%,
+  93%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes claw-wave {
+  0%,
+  76%,
+  100% {
+    transform: translate(0, 0) rotate(0);
+  }
+  80% {
+    transform: translate(0, -7px) rotate(-28deg);
+  }
+  84% {
+    transform: translate(0, -9px) rotate(8deg);
+  }
+  88% {
+    transform: translate(0, -7px) rotate(-28deg);
+  }
+  92% {
+    transform: translate(0, -9px) rotate(8deg);
+  }
+}
+
+@keyframes claw-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes claw-float {
+  0%,
+  100% {
+    transform: translate(60px, 26px) scale(1);
+  }
+  50% {
+    transform: translate(60px, 23px) scale(1.08);
+  }
+}
+
+@keyframes claw-sparkle {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.6);
+  }
+}
+
+@keyframes claw-jump {
+  0% {
+    transform: translateY(0) scale(1, 1);
+  }
+  20% {
+    transform: translateY(2px) scale(1.08, 0.9);
+  }
+  50% {
+    transform: translateY(-14px) scale(0.95, 1.06);
+  }
+  80% {
+    transform: translateY(1px) scale(1.05, 0.95);
+  }
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+}
+
+@keyframes claw-jitter {
+  0% {
+    transform: translateX(-1px);
+  }
+  50% {
+    transform: translateX(1px);
+  }
+}
+
+@keyframes claw-sweat {
+  0% {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes claw-breathe {
+  0%,
+  100% {
+    transform: translateY(8px) scale(1.06, 0.82);
+  }
+  50% {
+    transform: translateY(8px) scale(1.08, 0.78);
+  }
+}
+
+@keyframes claw-zzz {
+  0% {
+    opacity: 0;
+    transform: translate(0, 6px);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(8px, -10px);
+  }
+}
+
+@keyframes claw-tilt {
+  0%,
+  100% {
+    transform: rotate(-6deg);
+  }
+  50% {
+    transform: rotate(6deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .claw * {
+    animation: none !important;
+  }
+}
