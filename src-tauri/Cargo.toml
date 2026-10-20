@@ -1,0 +1,48 @@
+[package]
+name = "claude-auto"
+version = "0.1.0"
+description = "Claude Code 多账号凭据管理：额度监控 + 5h/周限额自动切换"
+authors = ["shiyi"]
+edition = "2021"
+
+[lib]
+name = "claude_auto_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-notification = "2"
+tauri-plugin-single-instance = "2"
+serde = { version = "1", features = ["derive"] }
+# preserve_order：回写 CLI 的 .claude.json / .credentials.json 时保持原键序，避免无意义 diff
+serde_json = { version = "1", features = ["preserve_order"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls", "socks"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1", features = ["v4"] }
+thiserror = "2"
+sha2 = "0.10"
+base64 = "0.22"
+rand = "0.8"
+tauri-plugin-opener = "2"
+
+[dev-dependencies]
+tempfile = "3"
+
+# 禁止调试宏与 stdout 散落（日志统一走 tracing），CI 以 -D warnings 升为硬门禁
+[lints.clippy]
+dbg_macro = "warn"
+todo = "warn"
+print_stdout = "warn"
+print_stderr = "warn"
+
+[profile.release]
+lto = "thin"
+strip = true
+codegen-units = 1
+opt-level = "s"

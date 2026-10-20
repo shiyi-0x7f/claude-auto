@@ -1,0 +1,28 @@
+# Logs
+logs
+*.log
+pnpm-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Rust 构建产物
+src-tauri/target/
+src-tauri/gen/
+
+# Claude Code 本地配置（工具目录，不入库）
+.claude/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# 营销素材（非代码资产不入库）
+marketing/
+
+# 统一 pnpm，禁 npm lockfile 回归
+package-lock.json

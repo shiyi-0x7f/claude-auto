@@ -1,0 +1,5 @@
+#!/bin/sh
+# 提交门禁：与 CI 同一套检查，未通过禁止提交
+set -e
+pnpm check
+pnpm check:rust
