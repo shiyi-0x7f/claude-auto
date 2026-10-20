@@ -64,6 +64,12 @@ Claude 的 refresh token 是**轮换式**的：用一次就发新的，旧的作
 - CLI `.claude.json` → `oauthAccount`：`accountUuid` / `emailAddress` / `organizationUuid` / …。界面登录时由 profile 映射生成（`anthropic::build_account`）。
 - 配置目录：设置了 `CLAUDE_CONFIG_DIR` 时两个文件都在该目录下；否则凭据在 `~/.claude/`，`.claude.json` 在用户主目录。
 
+## 到期管理（expiry.rs / alerts.rs）
+
+- **登录有效期**：access token 约 8 小时，自动刷新；refresh token 有效期由令牌响应的 `refresh_token_expires_in` 给出（实测约 4 周），记为 `claudeAiOauth.refreshTokenExpiresAt`（与 CLI 字段名一致）。过期后只能重新登录。每次刷新服务端都会下发新的有效期，正常使用中应持续顺延（尚未观察到实际顺延，待验证）。
+- **订阅续费日**：CLI 与 profile 均无续费周期接口（只有 `subscription_created_at`；苹果内购由 App Store 管理）。采用「`Account.subscription_expires_override` 手动值优先，否则按订阅开始日加整月推算」。推算总是从开始日加 n 个月，避免月末日期漂移。
+- **提醒**：轮询后 `alerts::check` 收集「登录剩 < 7 天 / 已过期」与「订阅剩 < 3 天」，按（账号, 到期时间）去重后发系统通知；挂件气泡与队伍栏 `!` 同步提示。
+
 ## 隐私模式
 
 - 挂件：只显示账号名前两个字（`shortLabel`）。
