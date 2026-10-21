@@ -62,3 +62,7 @@ git tag v0.2.0 && git push --tags   # 触发 GitHub Actions 构建安装包并�
 | 设置                   | `%APPDATA%/com.shiyi.claudeauto/settings.json`                                 |
 | 运行日志（正式版）     | `%APPDATA%/com.shiyi.claudeauto/claude-auto.log`                               |
 | CLI 凭据（切换时写入） | `$CLAUDE_CONFIG_DIR/.credentials.json`，未设置时 `~/.claude/.credentials.json` |
+
+## 许可证
+
+[MIT](LICENSE)

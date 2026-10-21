@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Claude Code 多账号凭据管理：额度监控 + 5h/周限额自动切换"
 authors = ["shiyi"]
 edition = "2021"
+license = "MIT"
 
 [lib]
 name = "claude_auto_lib"
