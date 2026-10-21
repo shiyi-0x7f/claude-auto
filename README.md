@@ -63,6 +63,13 @@ git tag v0.2.0 && git push --tags   # 触发 GitHub Actions 构建安装包并�
 | 运行日志（正式版）     | `%APPDATA%/com.shiyi.claudeauto/claude-auto.log`                               |
 | CLI 凭据（切换时写入） | `$CLAUDE_CONFIG_DIR/.credentials.json`，未设置时 `~/.claude/.credentials.json` |
 
+## 联系作者
+
+- 邮箱：[shiyi0x7f@gmail.com](mailto:shiyi0x7f@gmail.com)
+- 微信公众号：【拾壹0x7f】
+
+<img src=".github/assets/wechat-mp-qr.jpg" alt="微信公众号【拾壹0x7f】二维码" width="180">
+
 ## 许可证
 
 [MIT](LICENSE)
